@@ -21,16 +21,17 @@
     padding: 16px 20px;
   }
   header h1 { font-size: 18px; font-weight: 700; }
-  header p { font-size: 12px; opacity: .8; margin-top: 2px; }
+  header p  { font-size: 12px; opacity: .8; margin-top: 2px; }
 
   .container {
-    max-width: 900px;
+    max-width: 960px;
     margin: 0 auto;
     padding: 16px;
     display: grid;
     gap: 16px;
   }
 
+  /* ---- カード共通 ---- */
   .card {
     background: #fff;
     border: 1px solid #e2e8f0;
@@ -54,28 +55,120 @@
     border-radius: 2px;
   }
 
-  /* Table */
-  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-  .item-table th {
-    text-align: left;
+  /* ---- 案件情報 ---- */
+  .project-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .pi-field label {
+    display: block;
     font-size: 12px;
     color: #64748b;
     font-weight: 600;
-    padding: 4px 6px;
-    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 4px;
   }
-  .item-table td { padding: 4px 6px; }
-  .item-table input[type="text"],
-  .item-table input[type="number"] {
+  .pi-field input {
     width: 100%;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 13px;
+    padding: 8px 10px;
+    font-size: 14px;
     outline: none;
     transition: border-color .15s;
   }
-  .item-table input:focus { border-color: #2563eb; }
+  .pi-field input:focus { border-color: #2563eb; }
+
+  /* GAS設定 */
+  .gas-settings {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .gas-settings summary {
+    font-size: 12px;
+    color: #64748b;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .gas-settings summary:hover { color: #2563eb; }
+  .gas-inner {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .gas-inner input[type="text"] {
+    flex: 1;
+    min-width: 260px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 12px;
+    outline: none;
+    font-family: monospace;
+  }
+  .gas-inner input:focus { border-color: #2563eb; }
+  .btn-gas-save {
+    padding: 7px 14px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-gas-save:hover { background: #1d4ed8; }
+  #gas-status {
+    font-size: 12px;
+    padding: 4px 0;
+    align-self: center;
+  }
+  .status-ok   { color: #16a34a; }
+  .status-err  { color: #dc2626; }
+  .status-load { color: #64748b; }
+
+  /* ---- テーブル共通 ---- */
+  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .item-table th {
+    text-align: left;
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    padding: 4px 5px;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+  }
+  .item-table td { padding: 3px 5px; vertical-align: middle; }
+  .item-table input[type="text"],
+  .item-table input[type="number"],
+  .item-table select {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 5px 7px;
+    font-size: 13px;
+    outline: none;
+    background: #fff;
+    transition: border-color .15s;
+  }
+  .item-table input:focus,
+  .item-table select:focus { border-color: #2563eb; }
+  .amt-display {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 6px !important;
+    color: #1a1a2e;
+  }
 
   .btn-add {
     display: inline-flex;
@@ -105,43 +198,113 @@
   }
   .btn-del:hover { color: #ef4444; }
 
-  /* Slider */
-  .slider-row {
+  /* ---- 設定行（人日単価・税） ---- */
+  .settings-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 20px;
     flex-wrap: wrap;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
   }
-  .slider-row label { font-size: 13px; color: #475569; white-space: nowrap; }
-  .slider-row input[type="range"] {
-    flex: 1;
-    min-width: 120px;
-    accent-color: #2563eb;
+  .settings-row .field { display: flex; align-items: center; gap: 8px; }
+  .settings-row label { font-size: 13px; color: #475569; white-space: nowrap; }
+  .settings-row input[type="number"] {
+    width: 120px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+    outline: none;
   }
-  .slider-val {
-    font-weight: 700;
-    color: #2563eb;
-    min-width: 40px;
-    text-align: right;
-  }
-
-  /* Tax */
-  .tax-row { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .tax-row label { font-size: 13px; color: #475569; }
-  .tax-row select {
+  .settings-row input:focus { border-color: #2563eb; }
+  .settings-row select {
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     padding: 6px 10px;
     font-size: 13px;
     outline: none;
-    accent-color: #2563eb;
   }
+  .settings-row .unit { font-size: 12px; color: #94a3b8; }
 
-  /* Summary */
+  /* ---- 請求額カード ---- */
+  .billing-section { margin-top: 18px; }
+  .billing-section .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 10px;
+  }
+  .billing-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .billing-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #f8fafc;
+  }
+  .billing-card.recommended { border-color: #2563eb; background: #eff6ff; }
+  .bc-rate {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .billing-card.recommended .bc-rate { color: #2563eb; }
+  .bc-rec-tag {
+    font-size: 10px;
+    background: #2563eb;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 99px;
+  }
+  .bc-price { font-size: 22px; font-weight: 800; color: #1a1a2e; line-height: 1.2; }
+  .billing-card.recommended .bc-price { color: #2563eb; }
+  .bc-tax { font-size: 11px; color: #94a3b8; margin-top: 2px; margin-bottom: 10px; }
+  .bc-manday-row {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 4px;
+  }
+  .billing-card.recommended .bc-manday-row { border-color: #bfdbfe; }
+  .bc-md-label { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
+  .bc-md-val { font-size: 20px; font-weight: 800; color: #2563eb; }
+  .bc-md-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .bc-margin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .bc-margin-val { font-size: 13px; font-weight: 700; color: #475569; }
+  .billing-note { font-size: 11px; color: #94a3b8; margin-top: 8px; }
+
+  /* ---- バッジ ---- */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .badge-s { background: #dcfce7; color: #16a34a; }
+  .badge-a { background: #dbeafe; color: #2563eb; }
+  .badge-b { background: #fef9c3; color: #ca8a04; }
+  .badge-c { background: #fee2e2; color: #dc2626; }
+
+  /* ---- サマリー ---- */
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 10px;
   }
   .summary-item {
@@ -151,55 +314,76 @@
     padding: 12px 14px;
   }
   .summary-item .label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
-  .summary-item .value {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a1a2e;
-  }
+  .summary-item .value { font-size: 18px; font-weight: 700; color: #1a1a2e; }
   .summary-item.highlight { border-color: #2563eb; background: #eff6ff; }
   .summary-item.highlight .value { color: #2563eb; }
   .summary-item.profit-good .value { color: #16a34a; }
-  .summary-item.profit-warn .value { color: #ea580c; }
-  .summary-item.profit-bad .value { color: #dc2626; }
+  .summary-item.profit-warn .value  { color: #ea580c; }
+  .summary-item.profit-bad .value   { color: #dc2626; }
 
-  /* Rate table */
-  .rate-table { width: 100%; border-collapse: collapse; }
-  .rate-table th {
-    background: #f1f5f9;
-    text-align: left;
-    padding: 8px 10px;
-    font-size: 12px;
-    color: #475569;
-    font-weight: 600;
+  /* ---- GOボタン ---- */
+  .go-card {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
   }
-  .rate-table td {
-    padding: 9px 10px;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 13px;
+  .go-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
   }
-  .rate-table tr:last-child td { border-bottom: none; }
-  .rate-table tr:hover td { background: #f8fafc; }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 99px;
+  .go-sheet-label {
     font-size: 12px;
+    color: #64748b;
+  }
+  .go-sheet-name {
+    font-size: 15px;
     font-weight: 700;
+    color: #1a1a2e;
   }
-  .badge-s { background: #dcfce7; color: #16a34a; }
-  .badge-a { background: #dbeafe; color: #2563eb; }
-  .badge-b { background: #fef9c3; color: #ca8a04; }
-  .badge-c { background: #fee2e2; color: #dc2626; }
+  .btn-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s;
+    width: 100%;
+    justify-content: center;
+  }
+  .btn-go:hover { background: #1d4ed8; }
+  .btn-go:disabled { background: #93c5fd; cursor: not-allowed; }
+  #go-result {
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+  }
+  #go-result a {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  #go-result a:hover { text-decoration: underline; }
+  .go-note {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 8px;
+    text-align: center;
+  }
 
-  .recommended-row td { background: #eff6ff !important; }
-
-  @media (max-width: 600px) {
-    .summary-grid { grid-template-columns: 1fr 1fr; }
-    .item-table th:nth-child(3),
-    .item-table td:nth-child(3) { display: none; }
-    .rate-table th:nth-child(3),
-    .rate-table td:nth-child(3) { display: none; }
+  @media (max-width: 640px) {
+    .project-inputs   { grid-template-columns: 1fr; }
+    .summary-grid     { grid-template-columns: 1fr 1fr; }
+    .billing-cards    { grid-template-columns: 1fr; }
+    .item-table .col-person { display: none; }
   }
 </style>
 </head>
@@ -212,47 +396,84 @@
 
 <div class="container">
 
-  <!-- 外注費 -->
+  <!-- ① 案件情報 -->
   <div class="card">
-    <h2>外注費（税抜）</h2>
-    <table class="item-table" id="cost-table">
-      <thead>
-        <tr>
-          <th style="width:40%">項目名</th>
-          <th style="width:30%">金額（税抜）</th>
-          <th style="width:20%">担当者</th>
-          <th style="width:10%"></th>
-        </tr>
-      </thead>
-      <tbody id="cost-body"></tbody>
-    </table>
-    <button class="btn-add" onclick="addCostRow()">＋ 行を追加</button>
-
-    <div class="slider-row">
-      <label>ディレクション費率</label>
-      <input type="range" id="dir-rate" min="10" max="50" value="30" step="1" oninput="onDirRate(this)">
-      <span class="slider-val" id="dir-rate-val">30%</span>
+    <h2>案件情報</h2>
+    <div class="project-inputs">
+      <div class="pi-field">
+        <label>会社名</label>
+        <input type="text" id="company-name" placeholder="例：株式会社〇〇" oninput="updateSheetName()">
+      </div>
+      <div class="pi-field">
+        <label>案件名</label>
+        <input type="text" id="project-name" placeholder="例：コーポレートサイトリニューアル" oninput="updateSheetName()">
+      </div>
     </div>
 
-    <div class="tax-row">
-      <label>消費税</label>
-      <select id="tax-rate" onchange="calc()">
-        <option value="0.10">10%</option>
-        <option value="0.08">8%</option>
-        <option value="0">なし（0%）</option>
-      </select>
+    <details class="gas-settings" id="gas-details">
+      <summary>⚙ Google Sheets 連携設定</summary>
+      <div class="gas-inner">
+        <input type="text" id="gas-url" placeholder="GAS Web App URL（https://script.google.com/macros/s/...）">
+        <button class="btn-gas-save" onclick="saveGasUrl()">保存 &amp; 読み込み</button>
+        <span id="gas-status"></span>
+      </div>
+    </details>
+  </div>
+
+  <!-- ② 外注費 -->
+  <div class="card">
+    <h2>外注費（税抜）</h2>
+    <div style="overflow-x:auto">
+      <table class="item-table">
+        <thead>
+          <tr>
+            <th style="min-width:120px">項目</th>
+            <th style="width:110px">単価（税抜）</th>
+            <th style="width:65px">数量</th>
+            <th style="width:110px">金額（自動）</th>
+            <th class="col-person" style="width:100px">担当者</th>
+            <th style="width:32px"></th>
+          </tr>
+        </thead>
+        <tbody id="cost-body"></tbody>
+      </table>
+    </div>
+    <button class="btn-add" onclick="addCostRow()">＋ 行を追加</button>
+
+    <div class="settings-row">
+      <div class="field">
+        <label>人日単価</label>
+        <input type="number" id="day-rate" placeholder="50000" min="0" value="50000" oninput="calc()">
+        <span class="unit">円 / 日</span>
+      </div>
+      <div class="field">
+        <label>消費税</label>
+        <select id="tax-rate" onchange="calc()">
+          <option value="0.10">10%</option>
+          <option value="0.08">8%</option>
+          <option value="0">なし（0%）</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="billing-section">
+      <div class="section-title">▼ 掛け率別 請求額・必要ディレクション工数</div>
+      <div class="billing-cards" id="billing-cards"></div>
+      <p class="billing-note">
+        ※ 必要人日＝（目標請求額 − 外注費合計）÷ 人日単価　／　粗利率＝（請求額 − 外注費合計）÷ 請求額
+      </p>
     </div>
   </div>
 
-  <!-- 見積額 -->
+  <!-- ③ 見積額 -->
   <div class="card">
     <h2>見積額（税抜）</h2>
-    <table class="item-table" id="quote-table">
+    <table class="item-table">
       <thead>
         <tr>
-          <th style="width:60%">項目名</th>
-          <th style="width:30%">見積額（税抜）</th>
-          <th style="width:10%"></th>
+          <th>項目名</th>
+          <th style="width:160px">見積額（税抜）</th>
+          <th style="width:32px"></th>
         </tr>
       </thead>
       <tbody id="quote-body"></tbody>
@@ -260,21 +481,13 @@
     <button class="btn-add" onclick="addQuoteRow()">＋ 行を追加</button>
   </div>
 
-  <!-- サマリー -->
+  <!-- ④ 自動計算結果 -->
   <div class="card">
     <h2>自動計算結果</h2>
     <div class="summary-grid">
       <div class="summary-item">
         <div class="label">外注費合計（税抜）</div>
         <div class="value" id="s-cost">¥0</div>
-      </div>
-      <div class="summary-item">
-        <div class="label" id="s-dir-label">ディレクション費（30%）</div>
-        <div class="value" id="s-dir">¥0</div>
-      </div>
-      <div class="summary-item highlight">
-        <div class="label">経費合計（税抜）</div>
-        <div class="value" id="s-expense">¥0</div>
       </div>
       <div class="summary-item">
         <div class="label">見積額合計（税抜）</div>
@@ -292,30 +505,29 @@
         <div class="label">粗利率</div>
         <div class="value" id="s-margin">—</div>
       </div>
+      <div class="summary-item">
+        <div class="label">見積額ベース ディレクション人日</div>
+        <div class="value" id="s-manday">—</div>
+      </div>
     </div>
   </div>
 
-  <!-- 掛け率チェック -->
-  <div class="card">
-    <h2>掛け率チェック（参考）</h2>
-    <div style="overflow-x:auto">
-      <table class="rate-table" id="rate-table">
-        <thead>
-          <tr>
-            <th>掛け率</th>
-            <th>請求額（税抜）</th>
-            <th>請求額（税込）</th>
-            <th>粗利率</th>
-            <th>評価</th>
-          </tr>
-        </thead>
-        <tbody id="rate-body"></tbody>
-      </table>
+  <!-- ⑤ GO ボタン -->
+  <div class="card go-card">
+    <div class="go-top">
+      <div>
+        <div class="go-sheet-label">作成されるシート名</div>
+        <div class="go-sheet-name" id="go-sheet-name">（会社名・案件名を入力してください）</div>
+      </div>
     </div>
-    <p style="font-size:11px;color:#94a3b8;margin-top:8px">※ 7掛け推奨（粗利率70%目安）。粗利率＝（見積額－経費合計）÷ 見積額</p>
+    <button class="btn-go" id="go-btn" onclick="submitToSheet()">
+      GO → スプレッドシートを作成・入力
+    </button>
+    <div id="go-result"></div>
+    <p class="go-note">※ GAS URLが未設定の場合はエラーになります。上の「⚙ Google Sheets 連携設定」からURLを登録してください。</p>
   </div>
 
-  <!-- 評価基準 -->
+  <!-- ⑥ 評価基準 -->
   <div class="card" style="padding:14px 20px">
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
       <span style="font-size:12px;color:#64748b;font-weight:600">評価基準：</span>
@@ -326,38 +538,156 @@
     </div>
   </div>
 
-</div>
+</div><!-- /container -->
 
 <script>
-// ---- state ----
-let dirRate = 0.30;
+// ================================================================
+// 状態
+// ================================================================
 let taxRate = 0.10;
+let dropdownItems   = ['デザイン', 'コーディング・実装', '案件定義・ディレクション', '撮影', '動画制作', 'ライティング', 'その他'];
+let dropdownMembers = [];
 
-// ---- init ----
-addCostRow();
-addCostRow();
-addQuoteRow();
-addQuoteRow();
-calc();
+const RATES = [
+  { label: '5掛け', div: 0.5 },
+  { label: '6掛け', div: 0.4 },
+  { label: '7掛け', div: 0.3, recommended: true },
+];
 
-// ---- row management ----
+// ================================================================
+// 初期化
+// ================================================================
+(function init() {
+  // GAS URLをlocalStorageから復元
+  const saved = localStorage.getItem('gasUrl');
+  if (saved) {
+    document.getElementById('gas-url').value = saved;
+    loadDropdowns(saved);
+  }
+
+  addCostRow();
+  addCostRow();
+  addQuoteRow();
+  addQuoteRow();
+  calc();
+})();
+
+// ================================================================
+// GAS 連携
+// ================================================================
+function saveGasUrl() {
+  const url = document.getElementById('gas-url').value.trim();
+  if (!url) { setGasStatus('URLを入力してください', 'err'); return; }
+  localStorage.setItem('gasUrl', url);
+  loadDropdowns(url);
+}
+
+function loadDropdowns(gasUrl) {
+  setGasStatus('読み込み中…', 'load');
+  fetch(gasUrl + '?mode=init')
+    .then(r => r.json())
+    .then(data => {
+      if (data.status !== 'ok') throw new Error(data.message);
+      if (data.items   && data.items.length)   dropdownItems   = data.items;
+      if (data.members && data.members.length) dropdownMembers = data.members;
+      refreshAllSelects();
+      setGasStatus('✓ 読み込み完了', 'ok');
+      // 設定パネルを閉じる
+      document.getElementById('gas-details').removeAttribute('open');
+    })
+    .catch(err => {
+      setGasStatus('エラー: ' + err.message, 'err');
+    });
+}
+
+function setGasStatus(msg, type) {
+  const el = document.getElementById('gas-status');
+  el.textContent = msg;
+  el.className = type === 'ok' ? 'status-ok' : type === 'err' ? 'status-err' : 'status-load';
+}
+
+// 全行のselectを最新のdropdownデータで更新
+function refreshAllSelects() {
+  document.querySelectorAll('#cost-body tr').forEach(tr => {
+    const itemSel   = tr.querySelector('.sel-item');
+    const memberSel = tr.querySelector('.sel-member');
+    if (itemSel)   populateSelect(itemSel,   dropdownItems,   itemSel.value);
+    if (memberSel) populateSelect(memberSel, dropdownMembers, memberSel.value);
+  });
+}
+
+function populateSelect(sel, options, currentVal) {
+  const prev = currentVal || sel.value;
+  sel.innerHTML = '<option value="">— 選択 —</option>';
+  options.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o;
+    opt.textContent = o;
+    if (o === prev) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ================================================================
+// 案件情報
+// ================================================================
+function updateSheetName() {
+  const co  = document.getElementById('company-name').value.trim();
+  const prj = document.getElementById('project-name').value.trim();
+  const name = co && prj ? co + '_' + prj
+             : co  ? co + '_（案件名未入力）'
+             : prj ? '（会社名未入力）_' + prj
+             : '（会社名・案件名を入力してください）';
+  document.getElementById('go-sheet-name').textContent = name;
+}
+
+// ================================================================
+// 外注費行
+// ================================================================
 function addCostRow() {
   const tbody = document.getElementById('cost-body');
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" placeholder="例：デザイン制作" oninput="calc()"></td>
-    <td><input type="number" placeholder="0" min="0" oninput="calc()"></td>
-    <td><input type="text" placeholder="担当者名" oninput="calc()"></td>
+    <td>
+      <select class="sel-item" onchange="calc()">
+        <option value="">— 選択 —</option>
+      </select>
+    </td>
+    <td><input type="number" placeholder="0" min="0" oninput="calcRowAmt(this)"></td>
+    <td><input type="number" placeholder="1" min="0" value="1" oninput="calcRowAmt(this)"></td>
+    <td class="amt-display">¥0</td>
+    <td class="col-person">
+      <select class="sel-member">
+        <option value="">— 選択 —</option>
+      </select>
+    </td>
     <td><button class="btn-del" onclick="delRow(this)" title="削除">✕</button></td>
   `;
   tbody.appendChild(tr);
+  // 最新のドロップダウンデータで初期化
+  const itemSel   = tr.querySelector('.sel-item');
+  const memberSel = tr.querySelector('.sel-member');
+  populateSelect(itemSel,   dropdownItems,   '');
+  populateSelect(memberSel, dropdownMembers, '');
 }
 
+function calcRowAmt(input) {
+  const tr     = input.closest('tr');
+  const inputs = tr.querySelectorAll('input[type="number"]');
+  const price  = parseFloat(inputs[0].value) || 0;
+  const qty    = parseFloat(inputs[1].value) || 0;
+  tr.querySelector('.amt-display').textContent = fmt(price * qty);
+  calc();
+}
+
+// ================================================================
+// 見積額行
+// ================================================================
 function addQuoteRow() {
   const tbody = document.getElementById('quote-body');
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" placeholder="例：デザイン費" oninput="calc()"></td>
+    <td><input type="text" placeholder="例：ディレクション費" oninput="calc()"></td>
     <td><input type="number" placeholder="0" min="0" oninput="calc()"></td>
     <td><button class="btn-del" onclick="delRow(this)" title="削除">✕</button></td>
   `;
@@ -369,109 +699,179 @@ function delRow(btn) {
   calc();
 }
 
-function onDirRate(el) {
-  dirRate = parseInt(el.value) / 100;
-  document.getElementById('dir-rate-val').textContent = el.value + '%';
-  document.getElementById('s-dir-label').textContent = `ディレクション費（${el.value}%）`;
-  calc();
-}
-
-// ---- core calc ----
+// ================================================================
+// メイン計算
+// ================================================================
 function calc() {
   taxRate = parseFloat(document.getElementById('tax-rate').value);
+  const dayRate = parseFloat(document.getElementById('day-rate').value) || 0;
 
   // 外注費合計
-  const costRows = document.querySelectorAll('#cost-body tr');
   let costTotal = 0;
-  costRows.forEach(tr => {
-    const v = parseFloat(tr.querySelectorAll('input')[1].value) || 0;
-    costTotal += v;
+  document.querySelectorAll('#cost-body tr').forEach(tr => {
+    const inputs = tr.querySelectorAll('input[type="number"]');
+    const price  = parseFloat(inputs[0].value) || 0;
+    const qty    = parseFloat(inputs[1].value) || 1;
+    const amt    = price * qty;
+    tr.querySelector('.amt-display').textContent = fmt(amt);
+    costTotal += amt;
   });
-
-  // ディレクション費
-  const dirFee = Math.round(costTotal * dirRate);
-
-  // 経費合計
-  const expense = costTotal + dirFee;
 
   // 見積額合計
-  const quoteRows = document.querySelectorAll('#quote-body tr');
   let quoteTotal = 0;
-  quoteRows.forEach(tr => {
-    const v = parseFloat(tr.querySelectorAll('input')[1].value) || 0;
-    quoteTotal += v;
+  document.querySelectorAll('#quote-body tr').forEach(tr => {
+    quoteTotal += parseFloat(tr.querySelectorAll('input')[1].value) || 0;
   });
 
-  const quoteTax = Math.round(quoteTotal * (1 + taxRate));
-  const profit = quoteTotal - expense;
-  const margin = quoteTotal > 0 ? (profit / quoteTotal * 100) : null;
+  const quoteTax    = Math.round(quoteTotal * (1 + taxRate));
+  const profit      = quoteTotal - costTotal;
+  const margin      = quoteTotal > 0 ? (profit / quoteTotal * 100) : null;
+  const dirFeeQuote = quoteTotal - costTotal;
+  const mandayQuote = (dayRate > 0 && dirFeeQuote > 0) ? dirFeeQuote / dayRate : null;
 
-  // --- update DOM ---
-  document.getElementById('s-cost').textContent = fmt(costTotal);
-  document.getElementById('s-dir').textContent = fmt(dirFee);
-  document.getElementById('s-expense').textContent = fmt(expense);
+  // サマリー更新
+  document.getElementById('s-cost').textContent  = fmt(costTotal);
   document.getElementById('s-quote').textContent = fmt(quoteTotal);
 
   const taxLabel = taxRate === 0 ? '見積額合計（税込 なし）'
-    : `見積額合計（税込 ${Math.round(taxRate*100)}%）`;
+    : `見積額合計（税込 ${Math.round(taxRate * 100)}%）`;
   document.getElementById('s-quote-tax-label').textContent = taxLabel;
   document.getElementById('s-quote-tax').textContent = fmt(quoteTax);
-
-  document.getElementById('s-profit').textContent = fmt(profit);
+  document.getElementById('s-profit').textContent    = fmt(profit);
+  document.getElementById('s-manday').textContent    =
+    mandayQuote !== null ? mandayQuote.toFixed(1) + ' 人日' : '—';
 
   const marginCard = document.getElementById('s-margin-card');
   const profitCard = document.getElementById('s-profit-card');
   marginCard.className = 'summary-item highlight';
   profitCard.className = 'summary-item';
-
-  if (margin === null) {
-    document.getElementById('s-margin').textContent = '—';
-  } else {
+  if (margin !== null) {
     document.getElementById('s-margin').textContent = margin.toFixed(1) + '%';
-    if (margin >= 70) { marginCard.classList.add('profit-good'); profitCard.classList.add('profit-good'); }
-    else if (margin >= 40) { marginCard.classList.add('profit-warn'); profitCard.classList.add('profit-warn'); }
-    else { marginCard.classList.add('profit-bad'); profitCard.classList.add('profit-bad'); }
+    const cls = margin >= 70 ? 'profit-good' : margin >= 40 ? 'profit-warn' : 'profit-bad';
+    marginCard.classList.add(cls);
+    profitCard.classList.add(cls);
+  } else {
+    document.getElementById('s-margin').textContent = '—';
   }
 
-  // 掛け率テーブル
-  updateRateTable(costTotal, expense, taxRate);
+  updateBillingCards(costTotal, taxRate, dayRate);
 }
 
-// ---- rate table ----
-const RATES = [
-  { label: '5掛け', div: 0.5 },
-  { label: '6掛け', div: 0.4 },
-  { label: '7掛け（推奨）', div: 0.3, recommended: true },
-  { label: '7.5掛け', div: 0.25 },
-];
-
-function updateRateTable(costTotal, expense, tax) {
-  const tbody = document.getElementById('rate-body');
-  tbody.innerHTML = '';
+// ================================================================
+// 請求額カード
+// ================================================================
+function updateBillingCards(costTotal, tax, dayRate) {
+  const wrap = document.getElementById('billing-cards');
+  wrap.innerHTML = '';
   RATES.forEach(r => {
-    const price = costTotal > 0 ? Math.round(costTotal / r.div) : 0;
+    const price    = costTotal > 0 ? Math.round(costTotal / r.div) : 0;
     const priceTax = Math.round(price * (1 + tax));
-    const margin = price > 0 ? ((price - expense) / price * 100) : null;
-    const { symbol, cls } = badge(margin);
-    const tr = document.createElement('tr');
-    if (r.recommended) tr.className = 'recommended-row';
-    tr.innerHTML = `
-      <td><strong>${r.label}</strong></td>
-      <td>${fmt(price)}</td>
-      <td>${fmt(priceTax)}</td>
-      <td>${margin !== null ? margin.toFixed(1) + '%' : '—'}</td>
-      <td><span class="badge ${cls}">${symbol}</span></td>
+    const dirFee   = price - costTotal;
+    const manday   = (dayRate > 0 && price > 0) ? dirFee / dayRate : null;
+    const m        = price > 0 ? (dirFee / price * 100) : null;
+    const { symbol, cls } = badgeInfo(m);
+
+    const mandayHtml = manday !== null
+      ? `<div class="bc-manday-row">
+           <div class="bc-md-label">必要ディレクション工数</div>
+           <div class="bc-md-val">${manday.toFixed(1)}<span style="font-size:13px;font-weight:600"> 人日</span></div>
+           <div class="bc-md-sub">= ${fmt(dirFee)} ÷ ${fmt(dayRate)}/日</div>
+         </div>`
+      : `<div class="bc-manday-row"><div class="bc-md-label">人日単価を入力してください</div></div>`;
+
+    const div = document.createElement('div');
+    div.className = 'billing-card' + (r.recommended ? ' recommended' : '');
+    div.innerHTML = `
+      <div class="bc-rate">
+        ${r.label}
+        ${r.recommended ? '<span class="bc-rec-tag">推奨</span>' : ''}
+      </div>
+      <div class="bc-price">${fmt(price)}</div>
+      <div class="bc-tax">税込 ${fmt(priceTax)}</div>
+      ${mandayHtml}
+      <div class="bc-margin-row">
+        <span class="bc-margin-val">${m !== null ? '粗利率 ' + m.toFixed(1) + '%' : '—'}</span>
+        <span class="badge ${cls}">${symbol}</span>
+      </div>
     `;
-    tbody.appendChild(tr);
+    wrap.appendChild(div);
   });
 }
 
-function badge(margin) {
+// ================================================================
+// GO → シート作成
+// ================================================================
+function submitToSheet() {
+  const gasUrl  = localStorage.getItem('gasUrl');
+  const company = document.getElementById('company-name').value.trim();
+  const project = document.getElementById('project-name').value.trim();
+
+  if (!gasUrl)  { showGoResult('⚠ GAS URLが設定されていません。「⚙ Google Sheets 連携設定」からURLを登録してください。', 'err'); return; }
+  if (!company) { showGoResult('⚠ 会社名を入力してください。', 'err'); return; }
+  if (!project) { showGoResult('⚠ 案件名を入力してください。', 'err'); return; }
+
+  // 外注費データ収集
+  const costs = [];
+  document.querySelectorAll('#cost-body tr').forEach(tr => {
+    const item   = tr.querySelector('.sel-item').value;
+    const inputs = tr.querySelectorAll('input[type="number"]');
+    const price  = parseFloat(inputs[0].value) || 0;
+    const qty    = parseFloat(inputs[1].value) || 1;
+    const amount = price * qty;
+    const member = tr.querySelector('.sel-member').value;
+    if (amount > 0) costs.push({ item, member, amount });
+  });
+
+  // 見積額データ収集
+  const quotes = [];
+  document.querySelectorAll('#quote-body tr').forEach(tr => {
+    const inputs = tr.querySelectorAll('input');
+    const item   = inputs[0].value.trim();
+    const amount = parseFloat(inputs[1].value) || 0;
+    if (amount > 0) quotes.push({ item, amount });
+  });
+
+  const payload = { company, project, costs, quotes };
+  const qs = '?mode=create&data=' + encodeURIComponent(JSON.stringify(payload));
+
+  const btn = document.getElementById('go-btn');
+  btn.disabled = true;
+  btn.textContent = '処理中…';
+  showGoResult('シートを作成しています…', 'load');
+
+  fetch(gasUrl + qs)
+    .then(r => r.json())
+    .then(data => {
+      btn.disabled = false;
+      btn.textContent = 'GO → スプレッドシートを作成・入力';
+      if (data.status !== 'ok') throw new Error(data.message);
+      showGoResult(
+        `✓ シート「${data.sheetName}」を作成しました。 <a href="${data.url}" target="_blank">▶ シートを開く</a>`,
+        'ok'
+      );
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.textContent = 'GO → スプレッドシートを作成・入力';
+      showGoResult('エラー: ' + err.message, 'err');
+    });
+}
+
+function showGoResult(html, type) {
+  const el = document.getElementById('go-result');
+  el.innerHTML = html;
+  el.style.color = type === 'ok' ? '#16a34a' : type === 'err' ? '#dc2626' : '#64748b';
+}
+
+// ================================================================
+// ユーティリティ
+// ================================================================
+function badgeInfo(margin) {
   if (margin === null) return { symbol: '—', cls: '' };
-  if (margin >= 70) return { symbol: '◎ 優良', cls: 'badge-s' };
-  if (margin >= 60) return { symbol: '◯ 良好', cls: 'badge-a' };
-  if (margin >= 40) return { symbol: '△ 注意', cls: 'badge-b' };
-  return { symbol: '✕ 要検討', cls: 'badge-c' };
+  if (margin >= 70)    return { symbol: '◎ 優良',   cls: 'badge-s' };
+  if (margin >= 60)    return { symbol: '◯ 良好',   cls: 'badge-a' };
+  if (margin >= 40)    return { symbol: '△ 注意',   cls: 'badge-b' };
+  return                      { symbol: '✕ 要検討', cls: 'badge-c' };
 }
 
 function fmt(n) {
