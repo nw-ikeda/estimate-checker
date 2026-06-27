@@ -279,17 +279,9 @@
 
     <!-- 経費サマリー -->
     <div class="cost-summary" id="cost-summary">
-      <div class="cost-summary-row">
-        <span class="cs-label">外注費合計（税抜）</span>
-        <span class="cs-value" id="cs-subtotal">¥0</span>
-      </div>
-      <div class="cost-summary-row">
-        <span class="cs-label">ディレクション費（外注費合計 × 30%）</span>
-        <span class="cs-value" id="cs-dir">¥0</span>
-      </div>
       <div class="cost-summary-row total">
-        <span class="cs-label">経費合計</span>
-        <span class="cs-value" id="cs-total">¥0</span>
+        <span class="cs-label">経費合計（税抜）</span>
+        <span class="cs-value" id="cs-subtotal">¥0</span>
       </div>
     </div>
   </div>
@@ -502,32 +494,32 @@ function calc() {
     costSubtotal += amt;
   });
 
-  const dirCost   = Math.round(costSubtotal * DIR_RATE);  // ディレクション費（経費）
-  const costTotal = costSubtotal + dirCost;                // 経費合計
-
-  // 経費サマリー更新
+  // 経費サマリー更新（外注費合計のみ）
   document.getElementById('cs-subtotal').textContent = fmt(costSubtotal);
-  document.getElementById('cs-dir').textContent      = fmt(dirCost);
-  document.getElementById('cs-total').textContent    = fmt(costTotal);
 
   // 人日パターンテーブル更新
-  updatePatternTable(costSubtotal, costTotal, dayRate, taxRate);
+  updatePatternTable(costSubtotal, dayRate, taxRate);
 }
 
 // ================================================================
 // 人日パターンテーブル
 // ================================================================
-function updatePatternTable(costSubtotal, costTotal, dayRate, tax) {
-  const tbody = document.getElementById('pattern-body');
+function updatePatternTable(costSubtotal, dayRate, tax) {
+  const tbody  = document.getElementById('pattern-body');
   tbody.innerHTML = '';
+  // ディレクション費30%ラインに最も近い人日数を求める（目安表示用）
+  const targetDirFee = costSubtotal * DIR_RATE;
 
   MANDAY_PATTERNS.forEach((md, i) => {
-    const dirFee   = Math.round(md * dayRate);                   // ディレクション請求額
-    const budget   = costSubtotal + dirFee;                      // 予算合計（税抜）
-    const budgetTx = Math.round(budget * (1 + tax));             // 税込
-    const profit   = budget - costTotal;                         // 粗利
+    const dirFee   = Math.round(md * dayRate);          // ディレクション請求額 = 人日 × 単価
+    const budget   = costSubtotal + dirFee;             // 予算合計（税抜）= 外注費 + ディレクション
+    const budgetTx = Math.round(budget * (1 + tax));
+    const profit   = dirFee;                            // 粗利 = ディレクション請求額（外注費はコスト）
     const margin   = budget > 0 ? (profit / budget * 100) : null;
     const { sym, cls } = badgeInfo(margin);
+
+    // 30%ラインに最も近い行に目印
+    const is30 = dayRate > 0 && Math.abs(dirFee - targetDirFee) < dayRate * 0.07;
 
     const tr = document.createElement('tr');
     if (i === selectedIdx) tr.classList.add('selected');
@@ -536,7 +528,10 @@ function updatePatternTable(costSubtotal, costTotal, dayRate, tax) {
 
     tr.innerHTML = `
       <td><span class="row-radio"></span></td>
-      <td><span class="pt-manday">${md} 日</span></td>
+      <td>
+        <span class="pt-manday">${md} 日</span>
+        ${is30 ? '<span style="font-size:10px;background:#fef9c3;color:#ca8a04;padding:1px 5px;border-radius:99px;margin-left:4px">30%目安</span>' : ''}
+      </td>
       <td class="pt-dir-fee">${fmt(dirFee)}</td>
       <td class="pt-price">${fmt(budget)}</td>
       <td class="pt-price-tax">${fmt(budgetTx)}</td>
@@ -548,30 +543,26 @@ function updatePatternTable(costSubtotal, costTotal, dayRate, tax) {
   });
 
   // 選択バー更新
-  if (selectedIdx !== null) refreshSelectedBar(costSubtotal, costTotal, dayRate, tax);
+  if (selectedIdx !== null) refreshSelectedBar(costSubtotal, dayRate, tax);
 }
 
 function selectPattern(idx) {
   selectedIdx = idx;
-  // 全行の選択状態をリセット
   document.querySelectorAll('#pattern-body tr').forEach(tr => {
     tr.classList.toggle('selected', parseInt(tr.dataset.idx) === idx);
   });
-  // サマリーバー更新
-  const dayRate    = parseFloat(document.getElementById('day-rate').value) || 0;
+  const dayRate      = parseFloat(document.getElementById('day-rate').value) || 0;
   const costSubtotal = getCostSubtotal();
-  const dirCost    = Math.round(costSubtotal * DIR_RATE);
-  const costTotal  = costSubtotal + dirCost;
-  refreshSelectedBar(costSubtotal, costTotal, dayRate, taxRate);
+  refreshSelectedBar(costSubtotal, dayRate, taxRate);
 }
 
-function refreshSelectedBar(costSubtotal, costTotal, dayRate, tax) {
+function refreshSelectedBar(costSubtotal, dayRate, tax) {
   if (selectedIdx === null) return;
   const md       = MANDAY_PATTERNS[selectedIdx];
   const dirFee   = Math.round(md * dayRate);
   const budget   = costSubtotal + dirFee;
   const budgetTx = Math.round(budget * (1 + tax));
-  const profit   = budget - costTotal;
+  const profit   = dirFee;
   const margin   = budget > 0 ? (profit / budget * 100) : null;
 
   document.getElementById('sb-manday').textContent   = md + ' 人日';
