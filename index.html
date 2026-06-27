@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>経費逆算・見積もりチェッカー</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f7fa;
+    color: #1a1a2e;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  header {
+    background: #2563eb;
+    color: #fff;
+    padding: 16px 20px;
+  }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header p { font-size: 12px; opacity: .8; margin-top: 2px; }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .card h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: #2563eb;
+    border-radius: 2px;
+  }
+
+  /* Table */
+  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .item-table th {
+    text-align: left;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    padding: 4px 6px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .item-table td { padding: 4px 6px; }
+  .item-table input[type="text"],
+  .item-table input[type="number"] {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .item-table input:focus { border-color: #2563eb; }
+
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background .15s;
+  }
+  .btn-add:hover { background: #dbeafe; }
+
+  .btn-del {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color .15s;
+  }
+  .btn-del:hover { color: #ef4444; }
+
+  /* Slider */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .slider-row label { font-size: 13px; color: #475569; white-space: nowrap; }
+  .slider-row input[type="range"] {
+    flex: 1;
+    min-width: 120px;
+    accent-color: #2563eb;
+  }
+  .slider-val {
+    font-weight: 700;
+    color: #2563eb;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* Tax */
+  .tax-row { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .tax-row label { font-size: 13px; color: #475569; }
+  .tax-row select {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+    accent-color: #2563eb;
+  }
+
+  /* Summary */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .summary-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .summary-item .label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+  .summary-item .value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .summary-item.highlight { border-color: #2563eb; background: #eff6ff; }
+  .summary-item.highlight .value { color: #2563eb; }
+  .summary-item.profit-good .value { color: #16a34a; }
+  .summary-item.profit-warn .value { color: #ea580c; }
+  .summary-item.profit-bad .value { color: #dc2626; }
+
+  /* Rate table */
+  .rate-table { width: 100%; border-collapse: collapse; }
+  .rate-table th {
+    background: #f1f5f9;
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+  }
+  .rate-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+  }
+  .rate-table tr:last-child td { border-bottom: none; }
+  .rate-table tr:hover td { background: #f8fafc; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-s { background: #dcfce7; color: #16a34a; }
+  .badge-a { background: #dbeafe; color: #2563eb; }
+  .badge-b { background: #fef9c3; color: #ca8a04; }
+  .badge-c { background: #fee2e2; color: #dc2626; }
+
+  .recommended-row td { background: #eff6ff !important; }
+
+  @media (max-width: 600px) {
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .item-table th:nth-child(3),
+    .item-table td:nth-child(3) { display: none; }
+    .rate-table th:nth-child(3),
+    .rate-table td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>経費逆算・見積もりチェッカー</h1>
+  <p>Webディレクター向け 外注費・ディレクション費・粗利 一括計算ツール</p>
+</header>
+
+<div class="container">
+
+  <!-- 外注費 -->
+  <div class="card">
+    <h2>外注費（税抜）</h2>
+    <table class="item-table" id="cost-table">
+      <thead>
+        <tr>
+          <th style="width:40%">項目名</th>
+          <th style="width:30%">金額（税抜）</th>
+          <th style="width:20%">担当者</th>
+          <th style="width:10%"></th>
+        </tr>
+      </thead>
+      <tbody id="cost-body"></tbody>
+    </table>
+    <button class="btn-add" onclick="addCostRow()">＋ 行を追加</button>
+
+    <div class="slider-row">
+      <label>ディレクション費率</label>
+      <input type="range" id="dir-rate" min="10" max="50" value="30" step="1" oninput="onDirRate(this)">
+      <span class="slider-val" id="dir-rate-val">30%</span>
+    </div>
+
+    <div class="tax-row">
+      <label>消費税</label>
+      <select id="tax-rate" onchange="calc()">
+        <option value="0.10">10%</option>
+        <option value="0.08">8%</option>
+        <option value="0">なし（0%）</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 見積額 -->
+  <div class="card">
+    <h2>見積額（税抜）</h2>
+    <table class="item-table" id="quote-table">
+      <thead>
+        <tr>
+          <th style="width:60%">項目名</th>
+          <th style="width:30%">見積額（税抜）</th>
+          <th style="width:10%"></th>
+        </tr>
+      </thead>
+      <tbody id="quote-body"></tbody>
+    </table>
+    <button class="btn-add" onclick="addQuoteRow()">＋ 行を追加</button>
+  </div>
+
+  <!-- サマリー -->
+  <div class="card">
+    <h2>自動計算結果</h2>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="label">外注費合計（税抜）</div>
+        <div class="value" id="s-cost">¥0</div>
+      </div>
+      <div class="summary-item">
+        <div class="label" id="s-dir-label">ディレクション費（30%）</div>
+        <div class="value" id="s-dir">¥0</div>
+      </div>
+      <div class="summary-item highlight">
+        <div class="label">経費合計（税抜）</div>
+        <div class="value" id="s-expense">¥0</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">見積額合計（税抜）</div>
+        <div class="value" id="s-quote">¥0</div>
+      </div>
+      <div class="summary-item">
+        <div class="label" id="s-quote-tax-label">見積額合計（税込 10%）</div>
+        <div class="value" id="s-quote-tax">¥0</div>
+      </div>
+      <div class="summary-item" id="s-profit-card">
+        <div class="label">粗利（税抜）</div>
+        <div class="value" id="s-profit">¥0</div>
+      </div>
+      <div class="summary-item highlight" id="s-margin-card">
+        <div class="label">粗利率</div>
+        <div class="value" id="s-margin">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 掛け率チェック -->
+  <div class="card">
+    <h2>掛け率チェック（参考）</h2>
+    <div style="overflow-x:auto">
+      <table class="rate-table" id="rate-table">
+        <thead>
+          <tr>
+            <th>掛け率</th>
+            <th>請求額（税抜）</th>
+            <th>請求額（税込）</th>
+            <th>粗利率</th>
+            <th>評価</th>
+          </tr>
+        </thead>
+        <tbody id="rate-body"></tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:8px">※ 7掛け推奨（粗利率70%目安）。粗利率＝（見積額－経費合計）÷ 見積額</p>
+  </div>
+
+  <!-- 評価基準 -->
+  <div class="card" style="padding:14px 20px">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:12px;color:#64748b;font-weight:600">評価基準：</span>
+      <span class="badge badge-s">◎ 70%以上 優良</span>
+      <span class="badge badge-a">◯ 60%以上 良好</span>
+      <span class="badge badge-b">△ 40%以上 注意</span>
+      <span class="badge badge-c">✕ 40%未満 要検討</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---- state ----
+let dirRate = 0.30;
+let taxRate = 0.10;
+
+// ---- init ----
+addCostRow();
+addCostRow();
+addQuoteRow();
+addQuoteRow();
+calc();
+
+// ---- row management ----
+function addCostRow() {
+  const tbody = document.getElementById('cost-body');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" placeholder="例：デザイン制作" oninput="calc()"></td>
+    <td><input type="number" placeholder="0" min="0" oninput="calc()"></td>
+    <td><input type="text" placeholder="担当者名" oninput="calc()"></td>
+    <td><button class="btn-del" onclick="delRow(this)" title="削除">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function addQuoteRow() {
+  const tbody = document.getElementById('quote-body');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" placeholder="例：デザイン費" oninput="calc()"></td>
+    <td><input type="number" placeholder="0" min="0" oninput="calc()"></td>
+    <td><button class="btn-del" onclick="delRow(this)" title="削除">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function delRow(btn) {
+  btn.closest('tr').remove();
+  calc();
+}
+
+function onDirRate(el) {
+  dirRate = parseInt(el.value) / 100;
+  document.getElementById('dir-rate-val').textContent = el.value + '%';
+  document.getElementById('s-dir-label').textContent = `ディレクション費（${el.value}%）`;
+  calc();
+}
+
+// ---- core calc ----
+function calc() {
+  taxRate = parseFloat(document.getElementById('tax-rate').value);
+
+  // 外注費合計
+  const costRows = document.querySelectorAll('#cost-body tr');
+  let costTotal = 0;
+  costRows.forEach(tr => {
+    const v = parseFloat(tr.querySelectorAll('input')[1].value) || 0;
+    costTotal += v;
+  });
+
+  // ディレクション費
+  const dirFee = Math.round(costTotal * dirRate);
+
+  // 経費合計
+  const expense = costTotal + dirFee;
+
+  // 見積額合計
+  const quoteRows = document.querySelectorAll('#quote-body tr');
+  let quoteTotal = 0;
+  quoteRows.forEach(tr => {
+    const v = parseFloat(tr.querySelectorAll('input')[1].value) || 0;
+    quoteTotal += v;
+  });
+
+  const quoteTax = Math.round(quoteTotal * (1 + taxRate));
+  const profit = quoteTotal - expense;
+  const margin = quoteTotal > 0 ? (profit / quoteTotal * 100) : null;
+
+  // --- update DOM ---
+  document.getElementById('s-cost').textContent = fmt(costTotal);
+  document.getElementById('s-dir').textContent = fmt(dirFee);
+  document.getElementById('s-expense').textContent = fmt(expense);
+  document.getElementById('s-quote').textContent = fmt(quoteTotal);
+
+  const taxLabel = taxRate === 0 ? '見積額合計（税込 なし）'
+    : `見積額合計（税込 ${Math.round(taxRate*100)}%）`;
+  document.getElementById('s-quote-tax-label').textContent = taxLabel;
+  document.getElementById('s-quote-tax').textContent = fmt(quoteTax);
+
+  document.getElementById('s-profit').textContent = fmt(profit);
+
+  const marginCard = document.getElementById('s-margin-card');
+  const profitCard = document.getElementById('s-profit-card');
+  marginCard.className = 'summary-item highlight';
+  profitCard.className = 'summary-item';
+
+  if (margin === null) {
+    document.getElementById('s-margin').textContent = '—';
+  } else {
+    document.getElementById('s-margin').textContent = margin.toFixed(1) + '%';
+    if (margin >= 70) { marginCard.classList.add('profit-good'); profitCard.classList.add('profit-good'); }
+    else if (margin >= 40) { marginCard.classList.add('profit-warn'); profitCard.classList.add('profit-warn'); }
+    else { marginCard.classList.add('profit-bad'); profitCard.classList.add('profit-bad'); }
+  }
+
+  // 掛け率テーブル
+  updateRateTable(costTotal, expense, taxRate);
+}
+
+// ---- rate table ----
+const RATES = [
+  { label: '5掛け', div: 0.5 },
+  { label: '6掛け', div: 0.4 },
+  { label: '7掛け（推奨）', div: 0.3, recommended: true },
+  { label: '7.5掛け', div: 0.25 },
+];
+
+function updateRateTable(costTotal, expense, tax) {
+  const tbody = document.getElementById('rate-body');
+  tbody.innerHTML = '';
+  RATES.forEach(r => {
+    const price = costTotal > 0 ? Math.round(costTotal / r.div) : 0;
+    const priceTax = Math.round(price * (1 + tax));
+    const margin = price > 0 ? ((price - expense) / price * 100) : null;
+    const { symbol, cls } = badge(margin);
+    const tr = document.createElement('tr');
+    if (r.recommended) tr.className = 'recommended-row';
+    tr.innerHTML = `
+      <td><strong>${r.label}</strong></td>
+      <td>${fmt(price)}</td>
+      <td>${fmt(priceTax)}</td>
+      <td>${margin !== null ? margin.toFixed(1) + '%' : '—'}</td>
+      <td><span class="badge ${cls}">${symbol}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function badge(margin) {
+  if (margin === null) return { symbol: '—', cls: '' };
+  if (margin >= 70) return { symbol: '◎ 優良', cls: 'badge-s' };
+  if (margin >= 60) return { symbol: '◯ 良好', cls: 'badge-a' };
+  if (margin >= 40) return { symbol: '△ 注意', cls: 'badge-b' };
+  return { symbol: '✕ 要検討', cls: 'badge-c' };
+}
+
+function fmt(n) {
+  return '¥' + Math.round(n).toLocaleString('ja-JP');
+}
+</script>
+</body>
+</html>
